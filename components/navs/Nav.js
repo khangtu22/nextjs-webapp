@@ -1,19 +1,20 @@
 import {useRef, useState} from 'react';
-import {Container, Divider, Hidden, MenuItem, MenuList} from "@material-ui/core";
-import {makeStyles} from "@material-ui/styles";
-import Grid from "@material-ui/core/Grid";
+import {Container, Divider, Hidden, MenuItem, MenuList} from "@mui/material";
+import Grid from "@mui/material/Grid";
 import {gql, useApolloClient, useQuery} from "@apollo/client";
 import {Cache, navigationPositionVar} from "../utils/Cache";
-import PersonOutlineIcon from '@material-ui/icons/PersonOutline';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import BookmarkBorderOutlinedIcon from '@material-ui/icons/BookmarkBorderOutlined';
-import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined';
+import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import BookmarkBorderOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlined';
+import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import {useRouter} from "next/router";
 import Image from "next/image";
 import {Popup} from "semantic-ui-react";
-import Avatar from "@material-ui/core/Avatar";
+import Avatar from "@mui/material/Avatar";
 import {AUTH_TOKEN} from "../utils/Constants";
 import GET_NAVIGATION_POSITION_CACHE_ONLY from "../graphql/commons/GetNavigationPositionCacheOnly";
+import {styled} from "@mui/material/styles";
+import Box from "@mui/material/Box";
 
 const CURRENT_USER_QUERY = gql`
   query MeQuery{
@@ -25,136 +26,28 @@ const CURRENT_USER_QUERY = gql`
       }
 }
 `;
-const useStyles = makeStyles((theme) => ({
-    AppBar: {
-        background: '#fff',
-        // borderBottom: "1px solid rgb(229, 231, 235)",
-        borderBottom: "1px solid rgba(var(--b6a,219,219,219),1)",
-        position: "static",
-        padding: "0 20px",
-    },
-    avatarSmall: {
-        cursor: "pointer",
-        width: theme.spacing(3.2),
-        height: theme.spacing(3.2),
-        "&:active": {
-            opacity: "50%"
-        }
-    },
-    navIcons: {
-        fontSize: "18px",
-        marginRight: theme.spacing(2),
-    },
 
-    grow: {
-        flexGrow: 1,
+const ResponsiveGrid = styled(Grid)(({theme}) => ({
+    [theme.breakpoints.down('sm')]: {
+        width: "100%"
     },
-    menuButton: {
-        marginRight: theme.spacing(2),
+    [theme.breakpoints.up('md')]: {
+        width: "100%"
     },
-
-    divider: {
-        margin: theme.spacing(0, 0),
+    [theme.breakpoints.up('lg')]: {
+        width: "100%"
     },
-    logo: {
-        height: "2rem",
-        "&:active": {
-            opacity: "50%"
-        }
+}));
+const ImageContainer = styled(Grid)(({theme}) => ({
+    height: "30px",
+    width: undefined,
+    marginLeft: "10px",
+    [theme.breakpoints.down('sm')]: {
+        marginLeft: "0px",
     },
-    logoNextImage: {
-        height: "2rem",
-        opacity: "80%",
-        "&:active": {
-            opacity: "50%"
-        }
-    },
-    avatarNextImage: {
-        cursor: "pointer",
-        borderRadius: "50%",
-        "&:active": {
-            opacity: "50%"
-        }
-    },
-    iconAppBar: {
-        strokeWidth: "1.2px",
-        width: 25,
-        height: 25,
-        cursor: "pointer",
-        "&:active": {
-            opacity: "50%"
-        }
-    },
-    toolBar: {
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "center",
-        padding: "12px 0 12px 0",
-    },
-    imageContainer: {
-        height: "30px",
-        width: undefined,
-        marginLeft: "10px",
-        [theme.breakpoints.down('sm')]: {
-            marginLeft: "0px",
-        },
-    },
-
-    title: {
-        flexGrow: 1,
-    },
-    test: {
-        [theme.breakpoints.down('sm')]: {
-            width: "100%"
-        },
-        [theme.breakpoints.up('md')]: {
-            width: "950px"
-        },
-        [theme.breakpoints.up('lg')]: {
-            width: "950px"
-        },
-    },
-    optionDropdown: {
-        fontSize: '15px',
-        paddingRight: "120px"
-    },
-    menuItems: {
-        marginTop: 0,
-        padding: "10px  20px"
-    },
-    menu: {
-        height: "100%",
-        padding: 0,
-    },
-    rounded: {
-        backgroundColor: "transparent"
-    },
-    iconContainer: {
-        margin: 0,
-        padding: 0,
-        color: "#000000",
-        "&:active": {
-            backgroundColor: "rgba(0,0,0,0.09)"
-        }
-    },
-    iconContainerActive: {
-        margin: 0,
-        padding: 0,
-        color: "#1a90ff",
-        "&:active": {
-            backgroundColor: "rgba(0,0,0,0.12)"
-        }
-    },
-    usernameDetail: {
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "center",
-        gap: "20px",
-    }
 }));
 
 function Nav() {
-    const classes = useStyles();
     const router = useRouter();
     const client = useApolloClient();
 
@@ -168,25 +61,77 @@ function Nav() {
 
     let renderAvatar;
     if (currentUserData) {
-        if (currentUserData.me.username != null) {
-            renderAvatar = <Container className={classes.usernameDetail}>
-                {currentUserData.me.username}
-                <Avatar alt="Remy Sharp"
-                        className={classes.avatarSmall}/>
+        if (currentUserData.me?.username != null) {
+            renderAvatar = <Container sx={{
+                cursor: "pointer",
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                gap: "20px",
+            }}>
+                <Box sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "1px",
+                    fontSize: "14px",
+                    lineHeight: "15px",
+                    userSelect: "none",
+                    justifyContent: "center",
+                }}>
+                    <Box sx={{
+                        fontWeight: "400",
+                        color: "rgba(0, 0, 0, 0.54)",
+                        fontSize: "14px",
+                    }}>
+                        {currentUserData.me.username}
+                    </Box>
+                    <Box sx={{
+                        fontSize: "12px",
+                        fontWeight: "200",
+                        color: "rgba(0, 0, 0, 0.54)",
+                    }}>
+                        {currentUserData.me.userType === "A_2" ? "Admin" : "Member"}
+                    </Box>
+                </Box>
+                <Avatar alt="Remy Sharp" sx={{
+                    cursor: "pointer",
+                    width: "30px",
+                    height: "30px",
+                    "&:active": {
+                        opacity: "50%"
+                    }
+                }}/>
             </Container>
         } else {
             renderAvatar =
-                <Avatar alt="Remy Sharp"
-                        className={classes.avatarSmall}/>
+                <Avatar alt="Remy Sharp" sx={{
+                    cursor: "pointer",
+                    width: "30px",
+                    height: "30px",
+                    "&:active": {
+                        opacity: "50%"
+                    }
+                }}/>
         }
     }
 
     return (
-        <Grid item xs={12} className={classes.AppBar}>
-            <Grid container style={{display: "flex", justifyContent: "center"}}>
-                <Grid item className={classes.test}>
-                    <div className={classes.toolBar}>
-                        <div className={classes.imageContainer}>
+        <Grid item xs={12} sx={{
+            background: '#fff',
+            borderBottom: "1px solid rgba(var(--b6a,219,219,219),1)",
+            position: "static",
+            padding: "0 20px",
+            zIndex: 1,
+        }}>
+            <Grid container sx={{display: "flex", justifyContent: "center"}}>
+                <ResponsiveGrid item>
+                    <Box sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        padding: "12px 0 12px 0",
+                    }}>
+                        <ImageContainer>
                             <Image
                                 loading="eager"
                                 priority={true}
@@ -198,8 +143,8 @@ function Nav() {
                                     router.push("/")
                                 }}
                             />
-                        </div>
-                        <div className={classes.grow}/>
+                        </ImageContainer>
+                        <Box sx={{flexGrow: 1,}}/>
                         <Hidden xsDown>
                             <div style={{display: "flex", justifyContent: "center", marginRight: "16px"}}>
                                 {/*<SearchBox/>*/}
@@ -207,8 +152,6 @@ function Nav() {
                         </Hidden>
                         <div style={{display: 'flex', justifyContent: "center", justifyItems: "center", gap: "16px"}}>
                             <div style={{
-                                width: "25px",
-                                height: "25px",
                                 borderRadius: "50%",
                             }}
                                  ref={anchorRef}
@@ -229,10 +172,12 @@ function Nav() {
                                 }
                                        style={{
                                            borderRadius: "8px",
-                                           margin: "0px",
+                                           zIndex: 1000,
+                                           margin: "20px",
                                            padding: "0px",
                                            boxShadow: "rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px",
                                        }}
+                                       sx={{zIndex: 'tooltip'}}
                                        on={"click"}
                                        position={"bottom right"}
                                        basic
@@ -240,9 +185,11 @@ function Nav() {
                                     <MenuList
                                         id="composition-menu"
                                         aria-labelledby="composition-button"
-                                        className={classes.menu}
                                     >
-                                        <MenuItem className={classes.menuItems}
+                                        <MenuItem sx={{
+                                            marginTop: 0,
+                                            padding: "10px  20px"
+                                        }}
                                                   onClick={() => {
                                                       setOpen(false)
                                                       handleToggle()
@@ -250,21 +197,39 @@ function Nav() {
                                                           router.push('/' + currentUserData.me.username)
                                                       }
                                                   }}>
-                                            <PersonOutlineIcon className={classes.navIcons}/>
-                                            <span className={classes.optionDropdown}>
+                                            <PersonOutlineIcon sx={{
+                                                fontSize: "18px",
+                                                marginRight: "16px",
+                                            }}/>
+                                            <span sx={{
+                                                fontSize: '15px',
+                                                paddingRight: "120px"
+                                            }}>
                                                 Profile
                                             </span>
                                         </MenuItem>
-                                        <MenuItem className={classes.menuItems} onClick={() => {
+                                        <MenuItem sx={{
+                                            marginTop: 0,
+                                            padding: "10px  20px"
+                                        }} onClick={() => {
                                             setOpen(false)
 
                                         }}>
-                                            <BookmarkBorderOutlinedIcon className={classes.navIcons}/>
-                                            <span className={classes.optionDropdown}>
+                                            <BookmarkBorderOutlinedIcon sx={{
+                                                fontSize: "18px",
+                                                marginRight: "16px",
+                                            }}/>
+                                            <Box sx={{
+                                                fontSize: '15px',
+                                                paddingRight: "120px"
+                                            }}>
                                                 Saved
-                                            </span>
+                                            </Box>
                                         </MenuItem>
-                                        <MenuItem className={classes.menuItems} onClick={() => {
+                                        <MenuItem sx={{
+                                            marginTop: 0,
+                                            padding: "10px  20px"
+                                        }} onClick={() => {
                                             setOpen(false)
                                             Cache.writeQuery({
                                                     query: GET_CART_ITEMS,
@@ -276,29 +241,47 @@ function Nav() {
                                             router.push('/accounts/edit')
                                         }}>
 
-                                            <SettingsOutlinedIcon className={classes.navIcons}/>
-                                            <span className={classes.optionDropdown}>
+                                            <SettingsOutlinedIcon sx={{
+                                                fontSize: "18px",
+                                                marginRight: "16px",
+                                            }}/>
+                                            <Box sx={{
+                                                fontSize: '15px',
+                                                paddingRight: "120px"
+                                            }}>
                                                 Setting
-                                            </span>
+                                            </Box>
                                         </MenuItem>
-                                        <Divider className={classes.divider}/>
-                                        <MenuItem className={classes.menuItems} onClick={() => {
+                                        <Divider sx={{
+                                            margin: 0,
+                                            zIndex: 1,
+                                        }}/>
+                                        <MenuItem sx={{
+                                            marginTop: 0,
+                                            padding: "10px  20px"
+                                        }} onClick={() => {
                                             setOpen(false)
+                                            router.push("/login");
                                             localStorage.removeItem(AUTH_TOKEN)
                                             client.resetStore();
-                                            router.push("/login");
                                         }}>
-                                            <ExitToAppIcon className={classes.navIcons}/>
-                                            <span className={classes.optionDropdown}>
+                                            <ExitToAppIcon sx={{
+                                                fontSize: "18px",
+                                                marginRight: "16px",
+                                            }}/>
+                                            <Box sx={{
+                                                fontSize: '15px',
+                                                paddingRight: "120px"
+                                            }}>
                                                 Logout
-                                            </span>
+                                            </Box>
                                         </MenuItem>
                                     </MenuList>
                                 </Popup>
                             </div>
                         </div>
-                    </div>
-                </Grid>
+                    </Box>
+                </ResponsiveGrid>
             </Grid>
         </Grid>
     )

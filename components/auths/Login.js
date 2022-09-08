@@ -1,45 +1,131 @@
 import React, {useEffect, useState} from 'react';
 import {gql, useMutation} from '@apollo/client';
 import Image from 'next/image'
-import {Button, Container, IconButton, InputAdornment, makeStyles, TextField} from "@material-ui/core";
-import Grid from "@material-ui/core/Grid";
-import Visibility from "@material-ui/icons/Visibility";
-import VisibilityOff from "@material-ui/icons/VisibilityOff";
+import {Container, IconButton, InputAdornment, TextField} from "@mui/material";
+import Button from '@mui/material/Button';
+import Grid from "@mui/material/Grid";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Link from 'next/link';
 import {AUTH_TOKEN} from "../utils/Constants";
 import {useRouter} from "next/router";
 import {isLoggedInVar} from "../utils/Cache";
+import {styled} from "@mui/styles";
 
-const useStyles = makeStyles((theme) => ({
-    root: {
-        backgroundColor: "#ffff",
-        borderRadius: "16px",
-        boxShadow: "rgba(0, 0, 0, 0.15) 0px 5px 15px 0px",
-        maxWidth: 400,
-        marginTop: 100,
+const StyledTextField = styled(TextField)({
+    "& .MuiOutlinedInput-root": {
+        "&:fieldset": {
+            background: "rgba(255,255,255,0.05)",
+        },
+        "&.Mui-focused fieldset": {
+            background: "rgba(255,255,255,0)",
+            outline: "none",
+        }
     },
-    form: {
-        marginTop: theme.spacing(1),
+    "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
+        border: "1px solid #484850",
     },
-    submit: {
+})
+
+const CardLoginContainer = styled(Container)({
+    backgroundColor: "#ffff",
+    borderRadius: "16px",
+    boxShadow: "rgba(0, 0, 0, 0.15) 0px .5px 5px 0px",
+    maxWidth: "400px!important",
+    marginTop: 100,
+    position: "relative"
+})
+
+const FlexBoxDiv = styled("div")({
+    paddingTop: "30px",
+    display: "flex",
+    justifyContent: "center",
+})
+const LogoDiv = styled("div")({
+    height: "60px",
+    width: "200px",
+})
+const ErrorDiv = styled("div")({
+    marginTop: "1rem",
+    backgroundColor: "#ffebe8",
+    border: "1px solid #dd3c10",
+    display: "flex",
+    justifyContent: "center"
+})
+const ErrorChildDiv = styled("div")({
+    margin: "4px 16px 6px 16px",
+    padding: "10px"
+})
+
+const SuccessDiv = styled("div")({
+    marginTop: "1rem",
+    backgroundColor: "rgba(66,186,150,0.3)",
+    border: "1px solid #42ba96",
+    display: "flex",
+    justifyContent: "center"
+})
+const SuccessChildDiv = styled("div")({
+    margin: "4px 16px 6px 16px",
+    padding: "10px"
+})
+const LoginForm = styled("form")({
+    marginTop: 10,
+})
+const ForgotPassGrid = styled(Grid)({
+    paddingBottom: 10,
+})
+
+const ForgotPassTextSpan = styled("span")({
+    cursor: "pointer",
+    "&:hover": {
+        textDecoration: "1px underline",
+        color: "rgb(29, 161, 242)"
+    }
+})
+
+const PrivacyGrid = styled(Grid)({
+    textAlign: "center",
+    marginTop: "24px",
+    paddingBottom: "24px",
+    color: "rgba(113,113,113,.6)",
+})
+
+const LoginDrawerDiv = styled("div")({
+    textAlign: "center",
+    color: "rgba(113,113,113,.6)",
+    bottom: 0,
+    width: 500,
+    position: "absolute",
+    left: 400,
+})
+const LoginDrawerMetricsDiv = styled("div")({
+    textAlign: "center",
+    color: "rgba(113,113,113,.6)",
+    bottom: 0,
+    width: 500,
+    position: "absolute",
+    left: -500,
+})
+
+const SubmitButton = styled(Button)({
+    "&.MuiButton-root": {
+        background: "#006cb7",
         color: "#ffff",
         width: "100%",
         fontWeight: "600",
         textTransform: "none",
         fontSize: "18px",
-        margin: theme.spacing(1, 0, 2),
+        margin: "16px 0 24px 0",
         height: '48px',
-        background: "rgb(29, 161, 242)",
-
         border: "none",
         boxShadow: "none",
-        '&:hover': {
+        "&:hover": {
             background: "rgb(29, 161, 242)",
             color: "white",
             border: "none",
             boxShadow: "none",
         },
-        '&:disabled': {
+        "&:disabled": {
             background: "rgba(29,161,242,0.41)",
             color: "white",
             border: "none",
@@ -49,86 +135,11 @@ const useStyles = makeStyles((theme) => ({
             outline: "none",
         },
     },
-    resize: {
-        fontSize: "16px",
-        height: "12px",
-        "&::placeholder": {
-            color: "gray",
-        },
-    },
+})
 
-    labelRoot: {
-        fontSize: "16px",
-    },
-    forgotPass: {
-        paddingBottom: 10,
-    },
-    forgotPassText: {
-        cursor: "pointer",
-        "&:hover": {
-            textDecoration: "1px underline",
-            color: "rgb(29, 161, 242)"
-        }
-    },
-
-    inputField: {
-        "& .MuiOutlinedInput-root": {
-            "& fieldset": {
-                background: "rgba(255,255,255,0.05)",
-            },
-            "&.Mui-focused fieldset": {
-                background: "rgba(255,255,255,0)",
-                outline: "none",
-            }
-        },
-        "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
-            border: "1px solid #484850",
-        },
-    },
-    privacy: {
-        textAlign: "center",
-        marginTop: "24px",
-        paddingBottom: "24px",
-        color: "rgba(113,113,113,.6)",
-    },
-    errorsLoginContainer: {
-        marginTop: "1rem",
-        backgroundColor: "#ffebe8",
-        border: "1px solid #dd3c10",
-        display: "flex",
-        justifyContent: "center"
-    },
-    errorsLoginText: {
-        margin: "4px 16px 6px 16px",
-        padding: "10px"
-    },
-    successLoginContainer: {
-        marginTop: "1rem",
-        backgroundColor: "rgba(66,186,150,0.3)",
-        border: "1px solid #42ba96",
-        display: "flex",
-        justifyContent: "center"
-    },
-    successLoginText: {
-        margin: "4px 16px 6px 16px",
-        padding: "10px"
-    },
-    flexBox: {
-        paddingTop: "30px",
-        display: "flex",
-        justifyContent: "center",
-    },
-    logoAuthContainer: {
-        height: "60px",
-        width: "200px",
-    },
-    divider: {
-        display: "flex",
-        justifyContent: "center",
-        width: "100%"
-    },
-}));
-
+const LoginContainer = styled("div")({
+    position: "static",
+})
 
 const LOGIN_MUTATION = gql`
   mutation userLogin($email: String!, $password: String!){
@@ -151,7 +162,6 @@ const VERIFY_TOKEN_MUTATION = gql`
 `;
 
 export default function Login() {
-    const classes = useStyles();
     const route = useRouter();
     const [username, setUserName] = useState('');
     const [email, setEmail] = useState('');
@@ -165,10 +175,11 @@ export default function Login() {
             verifyTokenUser().then(res => {
                 if (res.data.verifyToken.success) {
                     setCurrentUsername(res.data.verifyToken.payload.username)
+                    console.log("Run")
                 }
             })
         }
-    },);
+    },[currentUsername]);
 
     const [userLogin, {loading: mutationLoading, error: mutationError}] = useMutation(LOGIN_MUTATION, {
         variables: {
@@ -192,10 +203,8 @@ export default function Login() {
                 localStorage.setItem(AUTH_TOKEN, response.data.tokenAuth.token);
             }
             if (response.data.tokenAuth.success) {
-
                 isLoggedInVar(true);
-                route.replace('/dashboards');
-                // route.push("/dashboards");
+                location.replace('/dashboards');
                 setIsLoginSuccess(true)
                 setIsLoginFail(false)
             } else {
@@ -211,7 +220,7 @@ export default function Login() {
     const handleMouseDownPassword = () => setShowPassword(!showPassword);
 
     const handleUserValidToken = () => {
-        return <Button
+        return <SubmitButton
             type="submit"
             fullWidth
             size="small"
@@ -219,9 +228,8 @@ export default function Login() {
             variant="contained"
             onClick={() => {
                 isLoggedInVar(true)
-                route.push("/dashboards");
+                location.replace('/dashboards');
             }}
-            className={classes.submit}
         >
 
             <Link href={"/"} passHref>
@@ -229,153 +237,196 @@ export default function Login() {
                     Continue as {currentUsername}
                 </span>
             </Link>
-        </Button>
+        </SubmitButton>
     }
 
     return (
         <Container>
-            <Container className={classes.root}>
-                <div className={classes.flexBox}>
-                    <div className={classes.logoAuthContainer}>
+            <LoginContainer>
+                <CardLoginContainer>
+                    <FlexBoxDiv>
+                        <LogoDiv>
+                            <Image
+                                loading="eager"
+                                priority={true}
+                                src="/hcl_logo.svg"
+                                height={"560"}
+                                width={"1593"}
+                                layout={"responsive"}
+                                quality={100}
+                                alt="logo"
+                            />
+                        </LogoDiv>
+                    </FlexBoxDiv>
+                    {isLoginFail ?
+                        <ErrorDiv>
+                            <ErrorChildDiv>
+                                <div style={{fontWeight: "bold", textAlign: "center"}}>
+                                    Login Fail
+                                </div>
+                                <div>
+                                    Check your email and password
+                                </div>
+                            </ErrorChildDiv>
+                        </ErrorDiv> : ""
+                    }
+
+                    {isLoginSuccess ?
+                        <SuccessDiv>
+                            <SuccessChildDiv>
+                                <div style={{fontWeight: "bold", textAlign: "center"}}>
+                                    Login Success
+                                </div>
+                                <div>
+                                    Redirect to home page...
+                                </div>
+                            </SuccessChildDiv>
+                        </SuccessDiv> : ""
+                    }
+
+                    <LoginForm onSubmit={onSubmit}>
+                        <StyledTextField
+                            variant="outlined"
+                            margin="normal"
+                            required
+                            fullWidth
+                            id="email"
+                            placeholder="Email"
+                            name="email"
+                            autoComplete="email"
+                            autoFocus
+                            onChange={e => setEmail(e.target.value)}
+                            InputProps={{
+                                classes: {
+                                    input: {
+                                        fontSize: "16px",
+                                        height: "12px",
+                                        "&::placeholder": {
+                                            color: "gray",
+                                        },
+                                    },
+                                },
+                            }}
+                            InputLabelProps={{
+                                classes: {
+                                    root: {
+                                        fontSize: "16px",
+                                    },
+                                },
+                            }}
+                        />
+                        <StyledTextField
+                            variant="outlined"
+                            margin="normal"
+                            required
+                            fullWidth
+                            name="password"
+                            placeholder="Password"
+                            type={showPassword ? "text" : "password"}
+                            id="password"
+                            autoComplete="current-password"
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            size="small"
+                                            aria-label="toggle password visibility"
+                                            onClick={handleClickShowPassword}
+                                            onMouseDown={handleMouseDownPassword}
+                                        >
+                                            {showPassword ? <Visibility/> : <VisibilityOff/>}
+                                        </IconButton>
+                                    </InputAdornment>
+                                ),
+                                classes: {
+                                    input: {
+                                        fontSize: "16px",
+                                        height: "12px",
+                                        "&::placeholder": {
+                                            color: "gray",
+                                        },
+                                    },
+                                },
+                            }}
+                            onChange={e => setPassword(e.target.value)}
+                            InputLabelProps={{
+                                classes: {
+                                    root: {
+                                        fontSize: "16px",
+                                    }
+                                }
+                            }}
+                        />
+                        <SubmitButton
+                            type="submit"
+                            value='Login'
+                            fullWidth
+                            size="small"
+                            variant="contained"
+                            disabled={!(email && password && !mutationLoading)}
+                        >
+                            {mutationLoading ?
+                                "loading..." : "Sign In"}
+                        </SubmitButton>
+
+                        {currentUsername ? handleUserValidToken() : null}
+                        <ForgotPassGrid container>
+                            <Grid item xs>
+                                <Link href={"/accounts/password/reset/"} passHref>
+                                    <ForgotPassTextSpan>
+                                        Forgot password?
+                                    </ForgotPassTextSpan>
+                                </Link>
+                            </Grid>
+                            <Grid item>
+                                <Link href={"/signup/"} passHref>
+                                    <ForgotPassTextSpan>
+                                        Sign up
+                                    </ForgotPassTextSpan>
+                                </Link>
+                            </Grid>
+                        </ForgotPassGrid>
+                        <PrivacyGrid container>
+                            <Grid item>
+                                <ForgotPassTextSpan>
+                                    By signing up, you agree to our <span>terms and
+                                privacy</span> policy.
+                                    We do not allow adult
+                                    content. You must be at least 18 years old to start a page.
+                                </ForgotPassTextSpan>
+                            </Grid>
+                        </PrivacyGrid>
+
+                    </LoginForm>
+                    <LoginDrawerDiv>
                         <Image
                             loading="eager"
                             priority={true}
-                            src="/hcl_logo.svg"
-                            height={"560"}
+                            src="/login2.svg"
+                            height={"1000"}
                             width={"1593"}
                             layout={"responsive"}
-                            quality={10}
+                            quality={100}
                             alt="logo"
                         />
-                    </div>
-                </div>
-                {isLoginFail ?
-                    <div className={classes.errorsLoginContainer}>
-                        <div className={classes.errorsLoginText}>
-                            <div style={{fontWeight: "bold", textAlign: "center"}}>
-                                Login Fail
-                            </div>
-                            <div>
-                                Check your email and password
-                            </div>
-                        </div>
-                    </div> : ""
-                }
+                    </LoginDrawerDiv>
+                    <LoginDrawerMetricsDiv>
+                        <Image
+                            loading="eager"
+                            priority={true}
+                            src="/metric.svg"
+                            height={"1000"}
+                            width={"1593"}
+                            layout={"responsive"}
+                            quality={100}
+                            alt="logo"
+                        />
+                    </LoginDrawerMetricsDiv>
+                </CardLoginContainer>
 
-                {isLoginSuccess ?
-                    <div className={classes.successLoginContainer}>
-                        <div className={classes.successLoginText}>
-                            <div style={{fontWeight: "bold", textAlign: "center"}}>
-                                Login Success
-                            </div>
-                            <div>
-                                Redirect to home page...
-                            </div>
-                        </div>
-                    </div> : ""
-                }
+            </LoginContainer>
 
-                <form className={classes.form} onSubmit={onSubmit}>
-                    <TextField
-                        variant="outlined"
-                        margin="normal"
-                        required
-                        fullWidth
-                        id="email"
-                        placeholder="Email"
-                        name="email"
-                        className={classes.inputField}
-                        autoComplete="email"
-                        autoFocus
-                        onChange={e => setEmail(e.target.value)}
-                        InputProps={{
-                            classes: {
-                                input: classes.resize,
-                            },
-                        }}
-                        InputLabelProps={{
-                            classes: {
-                                root: classes.labelRoot,
-                            },
-                        }}
-                    />
-                    <TextField
-                        variant="outlined"
-                        margin="normal"
-                        required
-                        fullWidth
-                        name="password"
-                        placeholder="Password"
-                        className={classes.inputField}
-                        type={showPassword ? "text" : "password"}
-                        id="password"
-                        autoComplete="current-password"
-                        InputProps={{
-                            endAdornment: (
-                                <InputAdornment position="end">
-                                    <IconButton
-                                        size="small"
-                                        aria-label="toggle password visibility"
-                                        onClick={handleClickShowPassword}
-                                        onMouseDown={handleMouseDownPassword}
-                                    >
-                                        {showPassword ? <Visibility/> : <VisibilityOff/>}
-                                    </IconButton>
-                                </InputAdornment>
-                            ),
-                            classes: {
-                                input: classes.resize,
-                            },
-                        }}
-                        onChange={e => setPassword(e.target.value)}
-                        InputLabelProps={{
-                            classes: {
-                                root: classes.labelRoot,
-                            }
-                        }}
-                    />
-                    <Button
-                        type="submit"
-                        value='Login'
-                        fullWidth
-                        size="small"
-                        variant="contained"
-                        className={classes.submit}
-                        disabled={!(email && password && !mutationLoading)}
-                    >
-                        {mutationLoading ?
-                            "loading..." : "Sign In"}
-                    </Button>
 
-                    {currentUsername ? handleUserValidToken() : null}
-                    <Grid container className={classes.forgotPass}>
-                        <Grid item xs>
-                            <Link href={"/accounts/password/reset/"} passHref>
-                                <span className={classes.forgotPassText}>
-                                    Forgot password?
-                                </span>
-                            </Link>
-                        </Grid>
-                        <Grid item>
-                            <Link href={"/signup/"} passHref>
-                                <span className={classes.forgotPassText}>
-                                    Sign up
-                                </span>
-                            </Link>
-                        </Grid>
-                    </Grid>
-                    <Grid container className={classes.privacy}>
-                        <Grid item>
-                            <div>
-                                By signing up, you agree to our <span className={classes.forgotPassText}>terms and
-                                privacy</span> policy.
-                                We do not allow adult
-                                content. You must be at least 18 years old to start a page.
-                            </div>
-                        </Grid>
-                    </Grid>
-                </form>
-            </Container>
         </Container>
     );
 };

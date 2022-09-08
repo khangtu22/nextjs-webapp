@@ -1,6 +1,6 @@
 import React from 'react';
 import Document, {Head, Html, Main, NextScript} from 'next/document';
-import {ServerStyleSheets} from '@material-ui/styles';
+import {ServerStyleSheets} from '@mui/styles';
 import theme from '../src/Theme';
 
 export default class MyDocument extends Document {
@@ -15,6 +15,10 @@ export default class MyDocument extends Document {
                     {/*    rel="stylesheet"*/}
                     {/*    href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"*/}
                     {/*/>*/}
+                    <link
+                        rel="stylesheet"
+                        href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+                    />
                 </Head>
                 <body  style={{overflowY: "scroll",         backgroundColor: "#fafafa"}}>
                     <Main/>
