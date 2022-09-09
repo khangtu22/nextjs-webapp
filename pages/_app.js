@@ -4,10 +4,10 @@ import {useApollo} from "../apollo-client";
 import React from 'react';
 import PropTypes from 'prop-types';
 import Head from 'next/head';
-import {ThemeProvider} from '@material-ui/styles';
-import CssBaseline from '@material-ui/core/CssBaseline';
+import { ThemeProvider } from "@mui/styles";
+import CssBaseline from "@mui/material/CssBaseline";
 import theme from '../src/Theme';
-
+import {createTheme, responsiveFontSizes} from "@mui/material";
 
 export default function MyApp(props) {
     const {Component, pageProps} = props;

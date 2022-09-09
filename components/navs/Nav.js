@@ -46,6 +46,14 @@ const ImageContainer = styled(Grid)(({theme}) => ({
         marginLeft: "0px",
     },
 }));
+const MenuPopup = styled(Popup)({
+    zIndex: 1000,
+    backgroundColor: "white",
+    borderRadius: "8px",
+    margin: "20px",
+    padding: "0px",
+    boxShadow: "rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px",
+})
 
 function Nav() {
     const router = useRouter();
@@ -165,22 +173,14 @@ function Nav() {
                                  }}
                             >
 
-                                <Popup trigger={
+                                <MenuPopup trigger={
                                     <div>
                                         {renderAvatar}
                                     </div>
                                 }
-                                       style={{
-                                           borderRadius: "8px",
-                                           zIndex: 1000,
-                                           margin: "20px",
-                                           padding: "0px",
-                                           boxShadow: "rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px",
-                                       }}
-                                       sx={{zIndex: 'tooltip'}}
-                                       on={"click"}
-                                       position={"bottom right"}
-                                       basic
+                                           on={"click"}
+                                           position={"bottom right"}
+                                           basic
                                 >
                                     <MenuList
                                         id="composition-menu"
@@ -201,12 +201,12 @@ function Nav() {
                                                 fontSize: "18px",
                                                 marginRight: "16px",
                                             }}/>
-                                            <span sx={{
+                                            <Box sx={{
                                                 fontSize: '15px',
                                                 paddingRight: "120px"
                                             }}>
                                                 Profile
-                                            </span>
+                                            </Box>
                                         </MenuItem>
                                         <MenuItem sx={{
                                             marginTop: 0,
@@ -277,7 +277,7 @@ function Nav() {
                                             </Box>
                                         </MenuItem>
                                     </MenuList>
-                                </Popup>
+                                </MenuPopup>
                             </div>
                         </div>
                     </Box>

@@ -1,56 +1,11 @@
 import Grid from "@material-ui/core/Grid";
 import Nav from "./navs/Nav";
-import {makeStyles} from "@material-ui/styles";
-import {chatRoomVar, isLoggedInVar, meVar} from "./utils/Cache";
-import {useEffect, useState} from "react";
-import {useRouter} from "next/router";
-import { styled, useTheme } from '@mui/material/styles';
+import {useState} from "react";
+import {styled} from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
 import MuiAppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import List from '@mui/material/List';
-import CssBaseline from '@mui/material/CssBaseline';
-import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
 import SideBar from "./navs/SideBar";
-
-const useStyles = makeStyles((theme) => ({
-    header: {
-        position: "fixed",
-        zIndex: 3
-    },
-    pageContent: {
-        paddingTop: "80px",
-        display: "flex",
-        justifyContent: "center",
-        [theme.breakpoints.up('lg')]: {
-            width: "950px"
-        },
-        [theme.breakpoints.up('md')]: {
-            width: "100%"
-        },
-        [theme.breakpoints.down('sm')]: {
-            paddingTop: "57px",
-            width: "100%"
-        },
-    },
-    mainPage: {
-        display: "flex",
-        justifyContent: "center",
-
-    },
-}));
 
 const drawerWidth = 240;
 
@@ -62,6 +17,29 @@ const openedMixin = (theme) => ({
     }),
     overflowX: 'hidden',
 });
+
+
+const PageContentGrid = styled(Grid)(({theme}) => ({
+    paddingTop: "80px",
+    display: "flex",
+    justifyContent: "center",
+    [theme.breakpoints.up('lg')]: {
+        width: "950px"
+    },
+    [theme.breakpoints.up('md')]: {
+        width: "100%"
+    },
+    [theme.breakpoints.down('sm')]: {
+        paddingTop: "57px",
+        width: "100%"
+    },
+}));
+
+
+const NavContainer = styled(Grid)(({theme}) => ({
+    position: "fixed",
+    zIndex: 3
+}));
 
 const closedMixin = (theme) => ({
     transition: theme.transitions.create('width', {
@@ -77,7 +55,7 @@ const closedMixin = (theme) => ({
 
 const AppBar = styled(MuiAppBar, {
     shouldForwardProp: (prop) => prop !== 'open',
-})(({ theme, open }) => ({
+})(({theme, open}) => ({
     zIndex: theme.zIndex.drawer + 1,
     transition: theme.transitions.create(['width', 'margin'], {
         easing: theme.transitions.easing.sharp,
@@ -93,8 +71,8 @@ const AppBar = styled(MuiAppBar, {
     }),
 }));
 
-const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
-    ({ theme, open }) => ({
+const Drawer = styled(MuiDrawer, {shouldForwardProp: (prop) => prop !== 'open'})(
+    ({theme, open}) => ({
         width: drawerWidth,
         flexShrink: 0,
         whiteSpace: 'nowrap',
@@ -112,7 +90,6 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 
 export default function Layout({children}) {
-    const classes = useStyles();
     const [open, setOpen] = useState(false);
 
     const handleDrawerOpen = () => {
@@ -125,21 +102,23 @@ export default function Layout({children}) {
 
     return (
         <>
-            <Box sx={{ display: 'flex' }}>
-                <CssBaseline />
-                <Box component="main" position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
-                    <Grid container className={classes.header}>
+            <Box sx={{display: 'flex'}}>
+                <Box component="main" position="fixed" sx={{zIndex: (theme) => theme.zIndex.drawer + 1}}>
+                    <NavContainer container>
                         <Nav/>
-                    </Grid>
+                    </NavContainer>
                 </Box>
-                    <SideBar/>
+                <SideBar/>
 
-                <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+                <Box component="main" sx={{flexGrow: 1, p: 3}}>
                     <main>
-                        <Grid container className={classes.mainPage}>
-                            <Grid item className={classes.pageContent}>
+                        <Grid container sx={{
+                            display: "flex",
+                            justifyContent: "center",
+                        }}>
+                            <PageContentGrid item>
                                 {children}
-                            </Grid>
+                            </PageContentGrid>
                         </Grid>
                     </main>
                 </Box>

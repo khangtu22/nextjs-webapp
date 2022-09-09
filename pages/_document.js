@@ -11,19 +11,17 @@ export default class MyDocument extends Document {
                     {/* PWA primary color */}
                     <meta name="theme-color" content={theme.palette.primary.main}/>
                     <link rel="icon" href="/hcl_logo.svg" sizes="32x32"/>
-                    {/*<link*/}
-                    {/*    rel="stylesheet"*/}
-                    {/*    href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"*/}
-                    {/*/>*/}
-                    <link
-                        rel="stylesheet"
-                        href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
-                    />
+                    <link rel="preconnect" href="https://fonts.gstatic.com"/>
+                    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+                    <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin/>
+                    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
+                          rel="stylesheet"/>
+                    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
                 </Head>
-                <body  style={{overflowY: "scroll",         backgroundColor: "#fafafa"}}>
-                    <Main/>
-                    <div id='upload'/>
-                    <NextScript/>
+                <body style={{overflowY: "scroll", backgroundColor: "#fafafa"}}>
+                <Main/>
+                <div id='upload'/>
+                <NextScript/>
                 </body>
             </Html>
         );
@@ -71,4 +69,5 @@ MyDocument.getInitialProps = async (ctx) => {
         // Styles fragment is rendered after the app and page rendering finish.
         styles: [...React.Children.toArray(initialProps.styles), sheets.getStyleElement()],
     };
-};
+}
+;

@@ -1,76 +1,101 @@
-import IconButton from "@mui/material/IconButton";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import Divider from "@mui/material/Divider";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
 import ListItemText from "@mui/material/ListItemText";
 import {Drawer} from "@mui/material";
 import {styled, useTheme} from "@mui/material/styles";
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import {useRouter} from "next/router";
+const drawerWidth = 200;
 
-const drawerWidth = 240;
-
-const DrawerHeader = styled('div')(({ theme }) => ({
+const NavBarListItemButton = styled(ListItemButton)(({theme}) => ({
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'flex-end',
-    padding: theme.spacing(0, 1),
-    // necessary for content to be below app bar
-    ...theme.mixins.toolbar,
+    minHeight: 48,
+    paddingLeft: "20px",
+    [`& .MuiTypography-root`]: {
+        fontSize: "14px"
+    },
 }));
 
+
+const NavBarListContainer = styled("div")(({theme}) => ({
+    display: 'flex',
+    alignItems: 'center',
+    flexDirection: "column",
+}));
+
+
+const NavBarListItemIcon = styled(ListItemIcon)(({theme}) => ({
+    minWidth: 0,
+    marginRight: "20px",
+    justifyContent: 'center',
+    disableRipple: true,
+}));
+
+
 export default function SideBar({size}) {
+    const router = useRouter();
     const theme = useTheme();
     const [open, setOpen] = useState(true);
+    const [activePage, setActivePage] = useState(true);
 
     const handleDrawerOpen = () => {
         setOpen(true);
     };
+    useEffect(() => {
+        if (router.pathname === "/"){
+            setActivePage(true)
+        }
+        console.log(router.pathname)
+    }, [activePage])
 
     const handleDrawerClose = () => {
         setOpen(false);
     };
 
     return (
-        <Drawer variant="permanent" open={open} sx={{
+        <Drawer variant="permanent" open={true} sx={{
             width: drawerWidth,
             flexShrink: 0,
-            [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
+            [`& .MuiDrawer-paper`]: {width: drawerWidth, boxSizing: 'border-box'},
         }}>
-            {/*<DrawerHeader>*/}
-            {/*    <IconButton onClick={handleDrawerClose}>*/}
-            {/*        {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}*/}
-            {/*    </IconButton>*/}
-            {/*</DrawerHeader>*/}
-            {/*<Divider />*/}
-            <List>
-                {['Inbox', 'Starred'].map((text, index) => (
-                    <ListItem key={text} disablePadding sx={{ display: 'block' }}>
-                        <ListItemButton
-                            sx={{
-                                minHeight: 48,
-                                justifyContent: open ? 'initial' : 'center',
-                                px: 2.5,
-                            }}
-                        >
-                            <ListItemIcon
-                                sx={{
-                                    minWidth: 0,
-                                    mr: open ? 3 : 'auto',
-                                    justifyContent: 'center',
-                                }}
-                            >
-                                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                            </ListItemIcon>
-                            <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-                        </ListItemButton>
-                    </ListItem>
-                ))}
+            <List sx={{pt: 7}}>
+                <ListItem disablePadding sx={{display: 'block'}}>
+                    <NavBarListItemButton disableRipple disableTouchRipple>
+                        <NavBarListItemIcon >
+                                <span className="material-symbols-outlined">
+                                    grid_view
+                                </span>
+                        </NavBarListItemIcon>
+                        <ListItemText primary={"Dashboard"}/>
+                    </NavBarListItemButton>
+                    <NavBarListItemButton  disableRipple disableTouchRipple>
+                        <NavBarListItemIcon>
+                                <span className="material-symbols-outlined">
+                                    receipt_long
+                                </span>
+                        </NavBarListItemIcon>
+                        <ListItemText primary={"Report"}/>
+                    </NavBarListItemButton>
+                    <NavBarListItemButton  disableRipple disableTouchRipple>
+                        <NavBarListItemIcon>
+                                <span className="material-symbols-outlined">
+                                    inventory
+                                </span>
+                        </NavBarListItemIcon>
+                        <ListItemText primary={"Test Screen"}/>
+                    </NavBarListItemButton>
+                    <NavBarListItemButton  disableRipple disableTouchRipple>
+                        <NavBarListItemIcon>
+                                <span className="material-symbols-outlined">
+                                    group
+                                </span>
+                        </NavBarListItemIcon>
+                        <ListItemText primary={"Manage Users"}/>
+                    </NavBarListItemButton>
+                </ListItem>
             </List>
         </Drawer>
     );
